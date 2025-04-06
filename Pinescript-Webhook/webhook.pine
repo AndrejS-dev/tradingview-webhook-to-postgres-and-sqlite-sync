@@ -1,0 +1,59 @@
+//@version=6
+indicator("Server Webhook", overlay=false)
+
+// Construct the JSON message
+timestamp = time  // Unix timestamp in milliseconds (TradingView default)
+
+// Fetch OHLCV data for multiple symbols
+[btc_o, btc_h, btc_l, btc_c, btc_v] = request.security("BINANCE:BTCUSDT", "", [open, high, low, close, volume])
+[eth_o, eth_h, eth_l, eth_c, eth_v] = request.security("BINANCE:ETHUSDT", "", [open, high, low, close, volume])
+[sol_o, sol_h, sol_l, sol_c, sol_v] = request.security("BINANCE:SOLUSDT", "", [open, high, low, close, volume])
+[xrp_o, xrp_h, xrp_l, xrp_c, xrp_v] = request.security("BINANCE:XRPUSDT", "", [open, high, low, close, volume])
+[bnb_o, bnb_h, bnb_l, bnb_c, bnb_v] = request.security("BINANCE:BNBUSDT", "", [open, high, low, close, volume])
+[sui_o, sui_h, sui_l, sui_c, sui_v] = request.security("BINANCE:SUIUSDT", "", [open, high, low, close, volume])
+// you can include more assets but use asset prefix (btc, eth ...) and ensure that you use the same prefix in python
+
+// set your password and ensure that it matches the one in the views.py
+password = "your_password_of_choice"
+
+// Build the JSON string properly formatted
+message = "{ " +
+  "\"password\": \"" + password + "\", " +
+  "\"timestamp\": " + str.tostring(timestamp) + ", " +
+  "\"btc_open\": " + str.tostring(math.round(btc_o, 2)) + ", " +
+  "\"btc_high\": " + str.tostring(math.round(btc_h, 2)) + ", " +
+  "\"btc_low\": " + str.tostring(math.round(btc_l, 2)) + ", " +
+  "\"btc_close\": " + str.tostring(math.round(btc_c, 2)) + ", " +
+  "\"btc_volume\": " + str.tostring(math.round(btc_v, 2)) + ", " +
+  "\"eth_open\": " + str.tostring(math.round(eth_o, 2)) + ", " +
+  "\"eth_high\": " + str.tostring(math.round(eth_h, 2)) + ", " +
+  "\"eth_low\": " + str.tostring(math.round(eth_l, 2)) + ", " +
+  "\"eth_close\": " + str.tostring(math.round(eth_c, 2)) + ", " +
+  "\"eth_volume\": " + str.tostring(math.round(eth_v, 2)) + ", " +
+  "\"sol_open\": " + str.tostring(math.round(sol_o, 2)) + ", " +
+  "\"sol_high\": " + str.tostring(math.round(sol_h, 2)) + ", " +
+  "\"sol_low\": " + str.tostring(math.round(sol_l, 2)) + ", " +
+  "\"sol_close\": " + str.tostring(math.round(sol_c, 2)) + ", " +
+  "\"sol_volume\": " + str.tostring(math.round(sol_v, 2)) + ", " +
+  "\"xrp_open\": " + str.tostring(math.round(xrp_o, 4)) + ", " +
+  "\"xrp_high\": " + str.tostring(math.round(xrp_h, 4)) + ", " +
+  "\"xrp_low\": " + str.tostring(math.round(xrp_l, 4)) + ", " +
+  "\"xrp_close\": " + str.tostring(math.round(xrp_c, 4)) + ", " +
+  "\"xrp_volume\": " + str.tostring(math.round(xrp_v, 2)) + ", " +
+  "\"bnb_open\": " + str.tostring(math.round(bnb_o, 2)) + ", " +
+  "\"bnb_high\": " + str.tostring(math.round(bnb_h, 2)) + ", " +
+  "\"bnb_low\": " + str.tostring(math.round(bnb_l, 2)) + ", " +
+  "\"bnb_close\": " + str.tostring(math.round(bnb_c, 2)) + ", " +
+  "\"bnb_volume\": " + str.tostring(math.round(bnb_v, 2)) + ", " +
+  "\"sui_open\": " + str.tostring(math.round(sui_o, 4)) + ", " +
+  "\"sui_high\": " + str.tostring(math.round(sui_h, 4)) + ", " +
+  "\"sui_low\": " + str.tostring(math.round(sui_l, 4)) + ", " +
+  "\"sui_close\": " + str.tostring(math.round(sui_c, 4)) + ", " +
+  "\"sui_volume\": " + str.tostring(math.round(sui_v, 2)) +
+  " }"
+
+// Trigger the alert on bar close
+alert(message, alert.freq_once_per_bar_close)
+
+// Plot something to keep the indicator active
+plot(na)

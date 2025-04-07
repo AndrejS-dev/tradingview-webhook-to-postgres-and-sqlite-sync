@@ -27,7 +27,7 @@ def setup_local_db():
             )
         """)
         # Add an index on timestamp for faster queries
-        cursor.execute(f"CREATE INDEX IF NOT EXISTS idx_{table}_timestamp ON {table} (timestamp)")
+        cursor.execute(f"CREATE INDEX IF NOT EXISTS idx_{table}_time ON {table} (time)")
 
     conn.commit()
     conn.close()
